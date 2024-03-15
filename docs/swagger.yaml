@@ -1,0 +1,117 @@
+basePath: /
+definitions:
+  response.Error:
+    properties:
+      error:
+        type: string
+      info:
+        type: string
+    type: object
+  response.QueueCreateResponse:
+    properties:
+      info:
+        type: string
+      name:
+        type: string
+      ok:
+        type: boolean
+      size:
+        type: integer
+    type: object
+  response.QueueDeleteResponse:
+    properties:
+      info:
+        type: string
+      name:
+        type: string
+      ok:
+        type: boolean
+    type: object
+  response.QueueList:
+    properties:
+      queue_names:
+        items:
+          type: string
+        type: array
+    type: object
+host: localhost:7920
+info:
+  contact: {}
+  description: This is a message broker
+  license:
+    name: MIT license
+  title: Limero
+  version: "1.0"
+paths:
+  /queue:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a queue by name
+      parameters:
+      - description: Queue name
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.QueueDeleteResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Deletes a queue
+      tags:
+      - queue
+    get:
+      consumes:
+      - application/json
+      description: Returns a list of queue names
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.QueueList'
+      summary: Queue list
+      tags:
+      - queue
+    put:
+      consumes:
+      - application/json
+      description: Creates a new queue with a name and size
+      parameters:
+      - description: Queue name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Queue size
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.QueueCreateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Creates a new queue
+      tags:
+      - queue
+swagger: "2.0"
