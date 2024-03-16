@@ -1,10 +1,25 @@
 basePath: /
 definitions:
+  queue.Message:
+    properties:
+      value:
+        type: string
+    type: object
   response.Error:
     properties:
       error:
         type: string
       info:
+        type: string
+    type: object
+  response.OK:
+    properties:
+      ok:
+        type: boolean
+    type: object
+  response.Ping:
+    properties:
+      ping:
         type: string
     type: object
   response.QueueCreateResponse:
@@ -15,7 +30,7 @@ definitions:
         type: string
       ok:
         type: boolean
-      size:
+      presize:
         type: integer
     type: object
   response.QueueDeleteResponse:
@@ -35,6 +50,8 @@ definitions:
         type: integer
       name:
         type: string
+      presize:
+        type: integer
       size:
         type: integer
       tail:
@@ -47,6 +64,19 @@ definitions:
           type: string
         type: array
     type: object
+  response.RootResponse:
+    properties:
+      author:
+        type: string
+      docs:
+        type: string
+      license:
+        type: string
+      limero:
+        type: string
+      version:
+        type: string
+    type: object
 host: localhost:7920
 info:
   contact: {}
@@ -54,8 +84,103 @@ info:
   license:
     name: MIT license
   title: Limero
-  version: "1.0"
+  version: "0.1"
 paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Returns information about the limero
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.RootResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Limero information
+      tags:
+      - root
+  /msg:
+    get:
+      consumes:
+      - application/json
+      description: Get message from the queue by name
+      parameters:
+      - description: Queue name
+        in: query
+        name: qname
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/queue.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get message from the queue
+      tags:
+      - msg
+    post:
+      consumes:
+      - application/json
+      description: Sends a message to queue by name
+      parameters:
+      - description: Queue name
+        in: query
+        name: qname
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.OK'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Sends a message to queue
+      tags:
+      - msg
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: Returns information about the limero
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Ping'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Limero information
+      tags:
+      - root
   /queue:
     delete:
       consumes:

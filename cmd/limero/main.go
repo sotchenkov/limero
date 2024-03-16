@@ -5,7 +5,7 @@ import (
 )
 
 // @title           Limero
-// @version         1.0
+// @version         0.1
 // @description     This is a message broker
 
 // @host      localhost:7920
@@ -14,5 +14,4 @@ import (
 
 func main() {
 	server.Serv()
-
 }

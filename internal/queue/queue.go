@@ -1,34 +1,39 @@
 package queue
 
-import "github.com/sotchenkov/limero/internal/lib/response"
+import (
+	"sync"
+
+	"github.com/sotchenkov/limero/internal/lib/response"
+)
 
 type Message struct {
-	Value string `json:"msg"`
+	Value string `json:"value"`
 }
 
-// NewQueue returns a new queue with the given initial size.
-func NewQueue(size int, name string) *Queue {
+// NewQueue returns a new queue with the given initial presize.
+func NewQueue(presize int, name string) *Queue {
 	return &Queue{
-		name: name,
-		msgs: make([]*Message, size),
-		size: size,
+		name:    name,
+		msgs:    make([]*Message, presize),
+		presize: presize,
 	}
 }
 
-// Queue is a basic FIFO queue based on a circular list that resizes as needed.
+// Queue is a basic FIFO queue based on a circular list that represizes as needed.
 type Queue struct {
-	name  string
-	msgs  []*Message
-	size  int
-	head  int
-	tail  int
-	count int
+	name    string
+	msgs    []*Message
+	presize int
+	head    int // first element index
+	tail    int // index where the next element will be placed when the Push is called
+	count   int
+	Mu      sync.Mutex
 }
 
 // Push adds a msg to the queue.
 func (q *Queue) Push(n *Message) {
 	if q.head == q.tail && q.count > 0 {
-		msgs := make([]*Message, len(q.msgs)+q.size)
+		msgs := make([]*Message, len(q.msgs)+q.presize)
 		copy(msgs, q.msgs[q.head:])
 		copy(msgs[len(q.msgs)-q.head:], q.msgs[:q.head])
 		q.head = 0
@@ -52,14 +57,9 @@ func (q *Queue) Pop() *Message {
 }
 
 func (q *Queue) Info() *response.QueueInfo {
-	return &response.QueueInfo{Name: q.name, Size: q.size, Head: q.head, Tail: q.tail, Count: q.count}
+	return &response.QueueInfo{Name: q.name, Presize: q.presize, Size: len(q.msgs), Head: q.head, Tail: q.tail, Count: q.count}
 }
 
-// func main() {
-// 	q := NewQueue(1)
-// 	q.Push(&Node{2})
-// 	q.Push(&Node{4})
-// 	q.Push(&Node{6})
-// 	q.Push(&Node{8})
-// 	fmt.Println(q.Pop(), q.Pop(), q.Pop(), q.Pop())
-// }
+func (q *Queue) IsEmpty() bool {
+	return q.count == 0
+}

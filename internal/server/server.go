@@ -16,6 +16,10 @@ func Serv() {
 		httpSwagger.URL("http://localhost:7920/swagger/doc.json"),
 	))
 
+	mux.HandleFunc("/", handlers.Root)
+	mux.HandleFunc("/ping", handlers.Ping)
 	mux.HandleFunc("/queue/", handlers.Queue)
+	mux.HandleFunc("/msg", handlers.Msg)
+
 	log.Fatal(http.ListenAndServe(":7920", mux))
 }

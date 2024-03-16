@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -19,7 +18,6 @@ func Queue(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 		deleteQueue(w, r)
 	case http.MethodGet:
-		fmt.Println(len(r.URL.Path[len("/queue/"):]))
 		if len(r.URL.Path[len("/queue/"):]) > 0 {
 			queueInfo(w, r)
 		} else {
@@ -72,7 +70,7 @@ func createQueue(w http.ResponseWriter, r *http.Request) {
 	newQueue := queue.NewQueue(queueSize, queueName)
 	queues[queueName] = newQueue
 
-	response.Send(w, http.StatusCreated, response.QueueCreateResponse{OK: true, Info: "The queue has been created", Name: queueName, Size: queueSize})
+	response.Send(w, http.StatusCreated, response.QueueCreateResponse{OK: true, Info: "The queue has been created", Name: queueName, Presize: queueSize})
 }
 
 // @Summary     Deletes a queue
@@ -145,5 +143,6 @@ func Queues(w http.ResponseWriter, r *http.Request) {
 	for queueName := range queues {
 		queueNames = append(queueNames, queueName)
 	}
+
 	response.Send(w, http.StatusOK, response.QueueList{QueueNames: queueNames})
 }

@@ -10,11 +10,12 @@ type QueueList struct {
 }
 
 type QueueInfo struct {
-	Name  string
-	Size  int
-	Head  int
-	Tail  int
-	Count int
+	Name    string `json:"name"`
+	Presize int    `json:"presize"`
+	Size    int    `json:"size"`
+	Head    int    `json:"head"`
+	Tail    int    `json:"tail"`
+	Count   int    `json:"count"`
 }
 
 type QueueDeleteResponse struct {
@@ -24,10 +25,26 @@ type QueueDeleteResponse struct {
 }
 
 type QueueCreateResponse struct {
-	OK   bool   `json:"ok"`
-	Info string `json:"info"`
-	Name string `json:"name"`
-	Size int    `json:"size"`
+	OK      bool   `json:"ok"`
+	Info    string `json:"info"`
+	Name    string `json:"name"`
+	Presize int    `json:"presize"`
+}
+
+type RootResponse struct {
+	Limero  string `json:"limero"`
+	Version string `json:"version"`
+	License string `json:"license"`
+	Author  string `json:"author"`
+	Docs    string `json:"docs"`
+}
+
+type Ping struct {
+	Ping string `json:"ping"`
+}
+
+type OK struct {
+	OK bool `json:"ok"`
 }
 
 type Error struct {
