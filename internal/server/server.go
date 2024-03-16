@@ -11,16 +11,6 @@ import (
 
 func Serv() {
 	mux := http.NewServeMux()
-	// mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	// 	switch r.Method {
-	// 	case http.MethodPost:
-	// 		handlers.SendHandler(w, r)
-	// 	case http.MethodGet:
-	// 		handlers.ReceiveHandler(w)
-	// 	default:
-	// 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-	// 	}
-	// })
 
 	mux.HandleFunc("/swagger/", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:7920/swagger/doc.json"),

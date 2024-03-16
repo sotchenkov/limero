@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/sotchenkov/limero/internal/lib/response"
 	"github.com/sotchenkov/limero/internal/queue"
@@ -17,7 +19,12 @@ func Queue(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 		deleteQueue(w, r)
 	case http.MethodGet:
-		listQueues(w)
+		fmt.Println(len(r.URL.Path[len("/queue/"):]))
+		if len(r.URL.Path[len("/queue/"):]) > 0 {
+			queueInfo(w, r)
+		} else {
+			Queues(w, r)
+		}
 	default:
 		response.Send(w, http.StatusMethodNotAllowed, response.Error{Error: "method_not_allowed", Info: "Only PUT, DELETE methods"})
 	}
@@ -96,6 +103,35 @@ func deleteQueue(w http.ResponseWriter, r *http.Request) {
 	response.Send(w, http.StatusOK, response.QueueDeleteResponse{OK: true, Info: "The queue has been deleted", Name: queueName})
 }
 
+// @Summary		Information about queue
+// @Description Returns information about the queue by its name
+// @Tags 		queue
+// @Accept 		json
+// @Produce 	json
+// @Success 	200  {object}  response.QueueInfo
+// @Failure     400  {object}  response.Error
+// @Failure     404  {object}  response.Error
+// @Router      /queue/{qname} [get]
+func queueInfo(w http.ResponseWriter, r *http.Request) {
+	segments := strings.Split(r.URL.Path, "/")
+
+	if len(segments) < 2 || segments[2] == "" {
+
+		response.Send(w, http.StatusBadRequest, response.Error{Error: "missing_parameter", Info: "The queue name is required"})
+		return
+	}
+
+	_, queueExist := queues[segments[2]]
+	if !queueExist {
+		response.Send(w, http.StatusNotFound, response.Error{Error: "not_found", Info: "A queue with this name was not found"})
+		return
+	}
+
+	q := queues[segments[2]]
+	response.Send(w, http.StatusOK, q.Info())
+
+}
+
 // @Summary     Queue list
 // @Description Returns a list of queue names
 // @Tags 		queue
@@ -103,7 +139,8 @@ func deleteQueue(w http.ResponseWriter, r *http.Request) {
 // @Produce 	json
 // @Success 	200  {object}  response.QueueList
 // @Router      /queue [get]
-func listQueues(w http.ResponseWriter) {
+func Queues(w http.ResponseWriter, r *http.Request) {
+
 	queueNames := make([]string, 0)
 	for queueName := range queues {
 		queueNames = append(queueNames, queueName)

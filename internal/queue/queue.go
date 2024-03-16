@@ -1,5 +1,7 @@
 package queue
 
+import "github.com/sotchenkov/limero/internal/lib/response"
+
 type Message struct {
 	Value string `json:"msg"`
 }
@@ -47,6 +49,10 @@ func (q *Queue) Pop() *Message {
 	q.head = (q.head + 1) % len(q.msgs)
 	q.count--
 	return node
+}
+
+func (q *Queue) Info() *response.QueueInfo {
+	return &response.QueueInfo{Name: q.name, Size: q.size, Head: q.head, Tail: q.tail, Count: q.count}
 }
 
 // func main() {

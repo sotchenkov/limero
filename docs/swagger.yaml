@@ -27,6 +27,19 @@ definitions:
       ok:
         type: boolean
     type: object
+  response.QueueInfo:
+    properties:
+      count:
+        type: integer
+      head:
+        type: integer
+      name:
+        type: string
+      size:
+        type: integer
+      tail:
+        type: integer
+    type: object
   response.QueueList:
     properties:
       queue_names:
@@ -112,6 +125,29 @@ paths:
           schema:
             $ref: '#/definitions/response.Error'
       summary: Creates a new queue
+      tags:
+      - queue
+  /queue/{qname}:
+    get:
+      consumes:
+      - application/json
+      description: Returns information about the queue by its name
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.QueueInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Information about queue
       tags:
       - queue
 swagger: "2.0"

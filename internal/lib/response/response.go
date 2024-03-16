@@ -9,6 +9,14 @@ type QueueList struct {
 	QueueNames []string `json:"queue_names"`
 }
 
+type QueueInfo struct {
+	Name  string
+	Size  int
+	Head  int
+	Tail  int
+	Count int
+}
+
 type QueueDeleteResponse struct {
 	OK   bool   `json:"ok"`
 	Info string `json:"info"`
