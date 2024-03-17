@@ -1,9 +1,9 @@
 <h1 align="center"> Limero
-<p align="center"> <img src="./imgs/limero_logo.png" width="230">
+<p align="center"> <img src="./imgs/limero_logo.png" width="250">
 
 
 ## 👋 Welcome to Limero!
-Limero is a [CouchDB](https://github.com/apache/couchdb)-like message broker. You can create and delete queues, send and receive messages using http requests. Everything is simple and fast. You can just relax 🛋️
+Limero is a [CouchDB](https://github.com/apache/couchdb)-like message broker. You can create and delete queues, send and receive messages using HTTP requests. Everything is simple and fast. You can just relax 🛋️
 
 ## ⚙️ Installation
 Clone repository and go to the project folder
