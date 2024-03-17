@@ -7,7 +7,7 @@ RUN go mod download
 
 RUN go build -o limero ./cmd/limero/main.go
 
-EXPOSE 8010
+EXPOSE 7920
 
 ENTRYPOINT [ "/app/limero" ]
 

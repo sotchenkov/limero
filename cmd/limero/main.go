@@ -12,7 +12,6 @@ import (
 // @host      localhost:7920
 // @license.name  MIT license
 // @BasePath  /
-
 func main() {
 	zlog, _ := zap.NewProduction()
 
