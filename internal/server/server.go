@@ -5,11 +5,13 @@ import (
 	"net/http"
 
 	_ "github.com/sotchenkov/limero/docs"
+	"github.com/sotchenkov/limero/internal/lib/logger"
 	"github.com/sotchenkov/limero/internal/server/handlers"
 	httpSwagger "github.com/swaggo/http-swagger"
+	"go.uber.org/zap"
 )
 
-func Serv() {
+func Serv(zlog *zap.Logger) {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/swagger/", httpSwagger.Handler(
@@ -21,5 +23,7 @@ func Serv() {
 	mux.HandleFunc("/queue/", handlers.Queue)
 	mux.HandleFunc("/msg", handlers.Msg)
 
-	log.Fatal(http.ListenAndServe(":7920", mux))
+	loggedMux := logger.LoggerMiddleware(zlog)(mux)
+
+	log.Fatal(http.ListenAndServe(":7920", loggedMux))
 }

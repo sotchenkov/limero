@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/sotchenkov/limero/internal/server"
+	"go.uber.org/zap"
 )
 
 // @title           Limero
@@ -13,5 +14,7 @@ import (
 // @BasePath  /
 
 func main() {
-	server.Serv()
+	zlog, _ := zap.NewProduction()
+
+	server.Serv(zlog)
 }
