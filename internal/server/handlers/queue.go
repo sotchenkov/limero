@@ -11,19 +11,25 @@ import (
 
 var queues = make(map[string]*queue.Queue)
 
-func Queue(w http.ResponseWriter, r *http.Request) {
+func ActionOnQueueHandlers(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPut:
 		createQueue(w, r)
 	case http.MethodDelete:
 		deleteQueue(w, r)
-	case http.MethodGet:
+	default:
+		response.Send(w, http.StatusMethodNotAllowed, response.Error{Error: "method_not_allowed", Info: "Only PUT, DELETE methods"})
+	}
+}
+
+func InfoAboutQueueHandlers(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
 		if len(r.URL.Path[len("/queue/"):]) > 0 {
 			queueInfo(w, r)
 		} else {
 			Queues(w, r)
 		}
-	default:
+	} else {
 		response.Send(w, http.StatusMethodNotAllowed, response.Error{Error: "method_not_allowed", Info: "Only PUT, DELETE methods"})
 	}
 }
