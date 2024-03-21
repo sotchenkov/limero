@@ -20,7 +20,8 @@ func Serv(zlog *zap.Logger) {
 
 	mux.HandleFunc("/", handlers.Root)
 	mux.HandleFunc("/ping", handlers.Ping)
-	mux.HandleFunc("/queue/", handlers.Queue)
+	mux.HandleFunc("/queue", handlers.ActionOnQueueHandlers)
+	mux.HandleFunc("/queue/", handlers.InfoAboutQueueHandlers)
 	mux.HandleFunc("/msg", handlers.Msg)
 
 	loggedMux := logger.LoggerMiddleware(zlog)(mux)

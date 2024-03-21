@@ -30,7 +30,7 @@ Limero is now ready to use ✨
 ## 🌀 Quick start
 First, create a queue:
 ```shell
-curl -LX PUT "http://127.0.0.1:7920/queue?name=helloworld" 
+curl -X PUT "http://127.0.0.1:7920/queue?name=helloworld" 
 
 {
 	"ok": true,
@@ -53,14 +53,14 @@ curl --request POST \
 
 And now we will receive a message from the queue:
 ```shell
-curl -LX GET "http://127.0.0.1:7920/msg?qname=helloworld"
+curl -X GET "http://127.0.0.1:7920/msg?qname=helloworld"
 
 {"value":"this is a new message!"}⏎
 ```
 ## 📃 Docs
 To view all the documentation, open the address under the "docs" key in the browser:
 ```shell
-curl -LX GET "http://127.0.0.1:7920/"
+curl -X GET "http://127.0.0.1:7920/"
 
 {
 	"limero": "Welcome!",
@@ -78,7 +78,7 @@ By opening the url in the browser, you can view the full swagger documentation
 ## 🌟 Tips
 You can allocate the queue size in advance if you know the average number of messages that will be in the queue. This will increase the queue performance ⚡
 ```shell
-curl -LX PUT "http://127.0.0.1:7920/queue?name=helloworld&size=100" 
+curl -X PUT "http://127.0.0.1:7920/queue?name=helloworld&size=100" 
 
 {
 	"ok": true,
