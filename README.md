@@ -1,5 +1,5 @@
 <h1 align="center"> Limero
-<p align="center"> <img src="./imgs/limero_logo.png" width="250">
+<p align="center"> <img src="./assets/limero_logo.png" width="250">
 
 
 ## 👋 Welcome to Limero!
@@ -72,7 +72,7 @@ curl -X GET "http://127.0.0.1:7920/"
 ```
 By opening the url in the browser, you can view the full swagger documentation
 
-<img src="./imgs/swag.png" width="400">
+<img src="./assets/swag.png" width="400">
 
 
 ## 🌟 Tips
