@@ -90,6 +90,7 @@ func PopMsg(w http.ResponseWriter, r *http.Request) {
 
 	if q.IsEmpty() {
 		response.Send(w, http.StatusNotFound, response.Error{Error: "empty_queue", Info: "The queue is empty"})
+		q.Mu.Unlock()
 		return
 	}
 	msg := q.Pop()
