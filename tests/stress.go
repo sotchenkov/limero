@@ -17,13 +17,13 @@ import (
 )
 
 type Msg struct {
-	Value string `json:"value"`
+	Value map[string]interface{} `json:"value"`
 }
 
 func createQueue(brokerAddr string, qname string, presize string) error {
 	req, err := http.NewRequest(http.MethodPut, "http://"+brokerAddr+"/queue?name="+qname+"&size="+presize, nil)
 	if err != nil {
-		log.Fatal("queue creation error")
+		log.Print("queue creation error")
 		return err
 	}
 
@@ -31,14 +31,14 @@ func createQueue(brokerAddr string, qname string, presize string) error {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Fatal("request error")
+		log.Print("request error")
 		return err
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
-		log.Fatal("status code is not 201")
+		log.Printf("status code is not 201: %v", resp.StatusCode)
 		return errors.New("wrong status code")
 	}
 
@@ -47,11 +47,12 @@ func createQueue(brokerAddr string, qname string, presize string) error {
 }
 
 func sendMsg(value string, brokerAddr string, qname string) error {
-	body := []byte(fmt.Sprintf(`{"value": "%s"}`, value))
+	body := []byte(fmt.Sprintf(`{"value": {"message": "%s"}}`, value))
+	log.Printf("Sending message payload: %s", body)
 
 	req, err := http.NewRequest(http.MethodPost, "http://"+brokerAddr+"/msg?qname="+qname, bytes.NewBuffer(body))
 	if err != nil {
-		log.Fatal("couldn't send a message")
+		log.Print("couldn't send a message")
 		return err
 	}
 
@@ -61,19 +62,18 @@ func sendMsg(value string, brokerAddr string, qname string) error {
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		log.Fatal("couldn't send a message")
+		log.Print("couldn't send a message")
 		return err
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
-		log.Fatal("status code is not 201")
+		log.Printf("status code is not 201: %v", resp.StatusCode)
 		return errors.New("wrong status code")
 	}
 
 	log.Print("the message has been sent successfully")
-
 	return nil
 }
 
@@ -81,9 +81,8 @@ func getMsg(brokerAddr string, qname string) (error, *Msg) {
 	httpClient := http.Client{Timeout: 5 * time.Second}
 	r, err := httpClient.Get("http://" + brokerAddr + "/msg?qname=" + qname)
 	if err != nil {
-		log.Fatal("request to receive a message from the broker could not be executed")
-
-		return err, &Msg{Value: ""}
+		log.Print("request to receive a message from the broker could not be executed")
+		return err, &Msg{Value: map[string]interface{}{}}
 	}
 
 	defer r.Body.Close()
@@ -91,9 +90,8 @@ func getMsg(brokerAddr string, qname string) (error, *Msg) {
 	var msg *Msg
 	err = json.NewDecoder(r.Body).Decode(&msg)
 	if err != nil {
-		log.Fatal("message could not be decoded")
-
-		return err, &Msg{Value: ""}
+		log.Print("message could not be decoded")
+		return err, &Msg{Value: map[string]interface{}{}}
 	}
 
 	return nil, msg
@@ -102,20 +100,20 @@ func getMsg(brokerAddr string, qname string) (error, *Msg) {
 func deleteQueue(brokerAddr string, qname string) {
 	req, err := http.NewRequest(http.MethodDelete, "http://"+brokerAddr+"/queue?name="+qname, nil)
 	if err != nil {
-		log.Fatal("queue deletion error")
+		log.Print("queue deletion error")
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Fatal("request error")
+		log.Print("request error")
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatal("status code is not 200")
+		log.Printf("status code is not 200: %v", resp.StatusCode)
 	}
 
 	log.Print("queue has been deleted successfully")
@@ -145,8 +143,8 @@ func BrokerStress() {
 		presize         = "1000"
 		sendGorutines   = 10000
 		reciveGorutines = 10000
-		sendTimeout     = 1 // milleseconds
-		getTimeout      = 1 // milleseconds
+		sendTimeout     = 1 // milliseconds
+		getTimeout      = 1 // milliseconds
 		msgLen          = 5 // characters
 	)
 
@@ -189,7 +187,7 @@ func BrokerStress() {
 					if err != nil {
 						log.Fatal(err)
 					}
-					log.Printf("recived msg: %s", msg)
+					log.Printf("received msg: %s", msg.Value["message"])
 				}
 			}
 		}()
@@ -207,9 +205,9 @@ func BrokerStress() {
 
 	log.Print("deleting a queue")
 	deleteQueue(brokerAddr, queueName)
-	log.Print("queues has been deleted")
+	log.Print("queue has been deleted")
 
-	log.Print("stress stoped")
+	log.Print("stress stopped")
 }
 
 func main() {
