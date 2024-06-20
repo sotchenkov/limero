@@ -7,7 +7,7 @@ import (
 )
 
 type Message struct {
-	Value string `json:"value"`
+	Value map[string]interface{} `json:"value"`
 }
 
 // NewQueue returns a new queue with the given initial presize.
