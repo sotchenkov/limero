@@ -45,7 +45,7 @@ Now you can send a message to the queue:
 curl --request POST \
      --url 'http://localhost:7920/msg?qname=helloworld' \
      --header 'Content-Type: application/json' \
-     --data '{"value": "this is a new message!"}'
+     --data '{"value": {"message":"this is a new message!"}}'
 
 {"ok":true}⏎  
 ```
@@ -55,7 +55,7 @@ And now we will receive a message from the queue:
 ```shell
 curl -X GET "http://127.0.0.1:7920/msg?qname=helloworld"
 
-{"value":"this is a new message!"}⏎
+{"value":{"message":"this is a new message!"}}⏎ 
 ```
 ## 📃 Docs
 To view all the documentation, open the address under the "docs" key in the browser:
